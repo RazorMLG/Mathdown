@@ -12,6 +12,8 @@
 
 ## Architecture Overview
 
+```
+
 src/
 ├── components/
 │ ├── App.tsx # Layout shell, state orchestration
@@ -33,6 +35,7 @@ src/
 ├── utils/
 │ └── storage.ts # localStorage wrapper (get/set/delete)
 └── main.tsx # Entry point
+```
 
 ---
 

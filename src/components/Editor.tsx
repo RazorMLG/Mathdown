@@ -1,6 +1,6 @@
 interface EditorProps {
-  content: string
-  onChange: (value: string) => void
+  content: string;
+  onChange: (value: string) => void;
 }
 
 export default function Editor({ content, onChange }: EditorProps) {
@@ -12,5 +12,5 @@ export default function Editor({ content, onChange }: EditorProps) {
       placeholder="Start writing Markdown..."
       spellCheck={false}
     />
-  )
+  );
 }

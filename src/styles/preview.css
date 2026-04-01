@@ -1,0 +1,121 @@
+/* Preview panel — rendered Markdown output */
+
+.preview-content {
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 1rem;
+  line-height: 1.75;
+  color: #e2e8f0;
+  padding: 2rem;
+  max-width: 72ch;
+  margin: 0 auto;
+}
+
+/* Headings */
+.preview-content h1,
+.preview-content h2,
+.preview-content h3 {
+  font-family: system-ui, sans-serif;
+  font-weight: 700;
+  line-height: 1.25;
+  margin-top: 1.75rem;
+  margin-bottom: 0.5rem;
+  color: #f1f5f9;
+}
+
+.preview-content h1 { font-size: 2rem; border-bottom: 1px solid #334155; padding-bottom: 0.25rem; }
+.preview-content h2 { font-size: 1.5rem; }
+.preview-content h3 { font-size: 1.25rem; }
+
+/* Paragraph */
+.preview-content p {
+  margin-bottom: 1rem;
+}
+
+/* Bold / Italic */
+.preview-content strong { font-weight: 700; color: #f1f5f9; }
+.preview-content em     { font-style: italic; }
+
+/* Inline code */
+.preview-content code {
+  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-size: 0.875em;
+  background: #1e293b;
+  color: #7dd3fc;
+  padding: 0.15em 0.35em;
+  border-radius: 4px;
+}
+
+/* Code block */
+.preview-content pre {
+  background: #0f172a;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  overflow-x: auto;
+  margin-bottom: 1rem;
+}
+
+.preview-content pre code {
+  background: none;
+  padding: 0;
+  color: #cbd5e1;
+  font-size: 0.875rem;
+  line-height: 1.6;
+}
+
+/* Blockquote */
+.preview-content blockquote {
+  border-left: 3px solid #475569;
+  margin: 1rem 0;
+  padding: 0.25rem 0 0.25rem 1rem;
+  color: #94a3b8;
+  font-style: italic;
+}
+
+/* Lists */
+.preview-content ul,
+.preview-content ol {
+  padding-left: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.preview-content li {
+  margin-bottom: 0.25rem;
+}
+
+/* Links */
+.preview-content a {
+  color: #60a5fa;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.preview-content a:hover {
+  color: #93c5fd;
+}
+
+/* Images */
+.preview-content img {
+  max-width: 100%;
+  border-radius: 6px;
+  margin: 0.5rem 0;
+}
+
+/* Horizontal rule */
+.preview-content hr {
+  border: none;
+  border-top: 1px solid #334155;
+  margin: 1.5rem 0;
+}
+
+/* Math — KaTeX targets these in Milestone 5 */
+.preview-content .math-inline {
+  font-size: 1em;
+}
+
+.preview-content .math-block {
+  display: block;
+  text-align: center;
+  margin: 1.25rem 0;
+  overflow-x: auto;
+}

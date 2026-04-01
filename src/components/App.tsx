@@ -1,10 +1,10 @@
-import { useState } from 'react'
-import Editor from './Editor'
-import Preview from './Preview'
-import Sidebar from './Sidebar'
+import { useState } from "react";
+import Editor from "./Editor";
+import Preview from "./Preview";
+import Sidebar from "./Sidebar";
 
 export default function App() {
-  const [content, setContent] = useState<string>('')
+  const [content, setContent] = useState<string>("");
 
   return (
     <div className="flex h-screen w-screen bg-zinc-900 text-zinc-100 overflow-hidden">
@@ -27,5 +27,5 @@ export default function App() {
         <Preview content={content} />
       </div>
     </div>
-  )
+  );
 }
