@@ -1,7 +1,7 @@
 /* Preview panel — rendered Markdown output */
 
 .preview-content {
-  font-family: Georgia, 'Times New Roman', serif;
+  font-family: Georgia, "Times New Roman", serif;
   font-size: 1rem;
   line-height: 1.75;
   color: #e2e8f0;
@@ -22,9 +22,17 @@
   color: #f1f5f9;
 }
 
-.preview-content h1 { font-size: 2rem; border-bottom: 1px solid #334155; padding-bottom: 0.25rem; }
-.preview-content h2 { font-size: 1.5rem; }
-.preview-content h3 { font-size: 1.25rem; }
+.preview-content h1 {
+  font-size: 2rem;
+  border-bottom: 1px solid #334155;
+  padding-bottom: 0.25rem;
+}
+.preview-content h2 {
+  font-size: 1.5rem;
+}
+.preview-content h3 {
+  font-size: 1.25rem;
+}
 
 /* Paragraph */
 .preview-content p {
@@ -32,12 +40,17 @@
 }
 
 /* Bold / Italic */
-.preview-content strong { font-weight: 700; color: #f1f5f9; }
-.preview-content em     { font-style: italic; }
+.preview-content strong {
+  font-weight: 700;
+  color: #f1f5f9;
+}
+.preview-content em {
+  font-style: italic;
+}
 
 /* Inline code */
 .preview-content code {
-  font-family: 'JetBrains Mono', 'Fira Code', monospace;
+  font-family: "JetBrains Mono", "Fira Code", monospace;
   font-size: 0.875em;
   background: #1e293b;
   color: #7dd3fc;

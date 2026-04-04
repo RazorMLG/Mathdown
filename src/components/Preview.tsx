@@ -1,13 +1,13 @@
-import '../styles/preview.css'
-import { tokenize } from '../parser/tokenizer'
-import { render } from '../parser/renderer'
+import "../styles/preview.css";
+import { tokenize } from "../parser/tokenizer";
+import { render } from "../parser/renderer";
 
 interface PreviewProps {
-  content: string
+  content: string;
 }
 
 export default function Preview({ content }: PreviewProps) {
-  const html = content ? render(tokenize(content)) : ''
+  const html = content ? render(tokenize(content)) : "";
 
   return (
     <div className="flex-1 overflow-y-auto">
@@ -22,5 +22,5 @@ export default function Preview({ content }: PreviewProps) {
         </div>
       )}
     </div>
-  )
+  );
 }
