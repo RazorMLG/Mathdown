@@ -34,7 +34,7 @@ export default function Sidebar({
   onDeleteNote,
 }: SidebarProps) {
   const [sortField, setSortField] = useState<SortField>("updatedAt");
-  const [sortDir, setSortDir] = useState<SortDir>("asc");
+  const [sortDir, setSortDir] = useState<SortDir>("desc");
 
   const sorted = sortNotes(notes, sortField, sortDir);
 
@@ -43,21 +43,69 @@ export default function Sidebar({
   }
 
   return (
-    <aside className="w-[250px] flex-shrink-0 flex flex-col bg-zinc-950 border-r border-zinc-700">
-      <div className="px-4 py-2 text-xs font-semibold uppercase tracking-widest text-zinc-500 border-b border-zinc-700">
-        Notes
+    <aside
+      style={{
+        width: "240px",
+        flexShrink: 0,
+        display: "flex",
+        flexDirection: "column",
+        background: "var(--surface)",
+        borderRight: "1px solid var(--border)",
+        height: "100%",
+      }}
+    >
+      {/* Header */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "12px 12px 12px 16px",
+          borderBottom: "1px solid var(--border)",
+        }}
+      >
+        <span
+          style={{
+            fontSize: "13px",
+            fontWeight: 600,
+            color: "var(--text)",
+            letterSpacing: "-0.01em",
+          }}
+        >
+          Notes
+        </span>
+        <div style={{ display: "flex", alignItems: "center", gap: "2px" }}>
+          <Toolbar
+            onNewNote={onNewNote}
+            onDeleteNote={onDeleteNote}
+            canDelete={activeNoteId !== null}
+          />
+        </div>
       </div>
-      <Toolbar
-        onNewNote={onNewNote}
-        onDeleteNote={onDeleteNote}
-        canDelete={activeNoteId !== null}
-      />
+
       {/* Sort controls */}
-      <div className="flex items-center gap-1 px-2 py-1.5 border-b border-zinc-800">
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: "6px",
+          padding: "6px 12px",
+          borderBottom: "1px solid var(--border)",
+        }}
+      >
         <select
           value={sortField}
           onChange={(e) => setSortField(e.target.value as SortField)}
-          className="flex-1 text-xs bg-zinc-800 text-zinc-300 rounded px-1.5 py-1 border border-zinc-700 outline-none"
+          style={{
+            flex: 1,
+            fontSize: "11px",
+            background: "transparent",
+            color: "var(--muted)",
+            border: "none",
+            outline: "none",
+            cursor: "pointer",
+            fontFamily: "inherit",
+          }}
         >
           <option value="updatedAt">Modified</option>
           <option value="createdAt">Created</option>
@@ -65,15 +113,40 @@ export default function Sidebar({
         </select>
         <button
           onClick={toggleDir}
-          className="text-xs px-2 py-1 rounded bg-zinc-800 border border-zinc-700 text-zinc-300 hover:text-white transition-colors"
           title={sortDir === "asc" ? "Ascending" : "Descending"}
+          style={{
+            fontSize: "11px",
+            color: "var(--muted)",
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+            padding: "2px 4px",
+            borderRadius: "3px",
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.background =
+              "var(--surface-2)";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.background =
+              "transparent";
+          }}
         >
           {sortDir === "asc" ? "↑" : "↓"}
         </button>
       </div>
-      <div className="flex-1 overflow-y-auto">
+
+      {/* Note list */}
+      <div style={{ flex: 1, overflowY: "auto" }}>
         {sorted.length === 0 ? (
-          <div className="px-4 py-8 text-center text-zinc-600 text-sm italic">
+          <div
+            style={{
+              padding: "2rem 1rem",
+              textAlign: "center",
+              color: "var(--muted)",
+              fontSize: "13px",
+            }}
+          >
             No notes yet
           </div>
         ) : (

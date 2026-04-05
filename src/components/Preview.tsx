@@ -36,7 +36,7 @@ export default function Preview({ content }: PreviewProps) {
   }, [content]);
 
   return (
-    <div className="flex-1 overflow-y-auto">
+    <div style={{ flex: 1, overflowY: "auto" }}>
       {html ? (
         <div
           ref={containerRef}
@@ -44,8 +44,14 @@ export default function Preview({ content }: PreviewProps) {
           dangerouslySetInnerHTML={{ __html: html }}
         />
       ) : (
-        <div className="p-8 text-zinc-600 italic text-sm">
-          Preview will appear here...
+        <div
+          style={{
+            padding: "2rem",
+            color: "var(--muted)",
+            fontSize: "13px",
+          }}
+        >
+          Preview will appear here
         </div>
       )}
     </div>

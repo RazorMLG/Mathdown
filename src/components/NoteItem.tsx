@@ -17,20 +17,83 @@ function timeAgo(timestamp: number): string {
   return `${days}d ago`;
 }
 
+function getContentPreview(content: string): string {
+  return content
+    .split("\n")
+    .map((line) => line.replace(/^#{1,6}\s+/, "").replace(/\*{1,3}|`/g, ""))
+    .filter((line) => line.trim().length > 0)
+    .slice(0, 3)
+    .join(" ")
+    .slice(0, 120);
+}
+
 export default function NoteItem({ note, isActive, onClick }: NoteItemProps) {
+  const preview = getContentPreview(note.content);
+
   return (
     <button
       onClick={onClick}
-      className={`w-full text-left px-4 py-3 border-b border-zinc-800 transition-colors ${
-        isActive
-          ? "bg-zinc-800 border-l-2 border-l-emerald-500"
-          : "hover:bg-zinc-900"
-      }`}
+      style={{
+        width: "100%",
+        textAlign: "left",
+        padding: "10px 12px",
+        borderBottom: "1px solid var(--border)",
+        borderLeft: isActive
+          ? "2px solid var(--accent)"
+          : "2px solid transparent",
+        backgroundColor: isActive ? "var(--accent-bg)" : "transparent",
+        transition: "background-color 0.1s",
+        cursor: "pointer",
+        display: "block",
+      }}
+      onMouseEnter={(e) => {
+        if (!isActive) {
+          (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+            "var(--surface-2)";
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!isActive) {
+          (e.currentTarget as HTMLButtonElement).style.backgroundColor =
+            "transparent";
+        }
+      }}
     >
-      <div className="text-sm font-medium text-zinc-100 truncate">
+      <div
+        style={{
+          fontSize: "13px",
+          fontWeight: 500,
+          color: "var(--text)",
+          whiteSpace: "nowrap",
+          overflow: "hidden",
+          textOverflow: "ellipsis",
+        }}
+      >
         {note.title || "Untitled"}
       </div>
-      <div className="text-xs text-zinc-500 mt-0.5">
+      {preview && (
+        <div
+          style={{
+            fontSize: "12px",
+            color: "var(--muted)",
+            marginTop: "2px",
+            overflow: "hidden",
+            display: "-webkit-box",
+            WebkitLineClamp: 2,
+            WebkitBoxOrient: "vertical",
+            lineHeight: "1.4",
+          }}
+        >
+          {preview}
+        </div>
+      )}
+      <div
+        style={{
+          fontSize: "11px",
+          color: "var(--muted)",
+          marginTop: "4px",
+        }}
+      >
         {timeAgo(note.updatedAt)}
       </div>
     </button>

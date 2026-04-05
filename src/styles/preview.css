@@ -4,7 +4,7 @@
   font-family: Georgia, "Times New Roman", serif;
   font-size: 1rem;
   line-height: 1.75;
-  color: #e2e8f0;
+  color: var(--text);
   padding: 2rem;
   max-width: 72ch;
   margin: 0 auto;
@@ -14,17 +14,17 @@
 .preview-content h1,
 .preview-content h2,
 .preview-content h3 {
-  font-family: system-ui, sans-serif;
+  font-family: "Inter", system-ui, sans-serif;
   font-weight: 700;
   line-height: 1.25;
   margin-top: 1.75rem;
   margin-bottom: 0.5rem;
-  color: #f1f5f9;
+  color: var(--heading);
 }
 
 .preview-content h1 {
   font-size: 2rem;
-  border-bottom: 1px solid #334155;
+  border-bottom: 1px solid var(--h1-border);
   padding-bottom: 0.25rem;
 }
 .preview-content h2 {
@@ -42,7 +42,7 @@
 /* Bold / Italic */
 .preview-content strong {
   font-weight: 700;
-  color: #f1f5f9;
+  color: var(--heading);
 }
 .preview-content em {
   font-style: italic;
@@ -52,16 +52,16 @@
 .preview-content code {
   font-family: "JetBrains Mono", "Fira Code", monospace;
   font-size: 0.875em;
-  background: #1e293b;
-  color: #7dd3fc;
+  background: var(--code-bg);
+  color: var(--code-text);
   padding: 0.15em 0.35em;
   border-radius: 4px;
 }
 
 /* Code block */
 .preview-content pre {
-  background: #0f172a;
-  border: 1px solid #1e293b;
+  background: var(--pre-bg);
+  border: 1px solid var(--pre-border);
   border-radius: 8px;
   padding: 1rem 1.25rem;
   overflow-x: auto;
@@ -71,40 +71,48 @@
 .preview-content pre code {
   background: none;
   padding: 0;
-  color: #cbd5e1;
+  color: var(--code-text);
   font-size: 0.875rem;
   line-height: 1.6;
 }
 
 /* Blockquote */
 .preview-content blockquote {
-  border-left: 3px solid #475569;
+  border-left: 3px solid var(--quote-border);
   margin: 1rem 0;
   padding: 0.25rem 0 0.25rem 1rem;
-  color: #94a3b8;
+  color: var(--quote-text);
   font-style: italic;
 }
 
 /* Lists */
-.preview-content ul,
+.preview-content ul {
+  list-style-type: disc;
+  padding-left: 1.25rem;
+  margin-bottom: 1rem;
+}
+
 .preview-content ol {
-  padding-left: 1.5rem;
+  list-style-type: decimal;
+  padding-left: 1.25rem;
   margin-bottom: 1rem;
 }
 
 .preview-content li {
-  margin-bottom: 0.25rem;
+  line-height: 1.5;
+  margin-bottom: 0.2rem;
+  padding-left: 0.25rem;
 }
 
 /* Links */
 .preview-content a {
-  color: #60a5fa;
+  color: var(--link);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
 
 .preview-content a:hover {
-  color: #93c5fd;
+  color: var(--link-hover);
 }
 
 /* Images */
@@ -117,11 +125,11 @@
 /* Horizontal rule */
 .preview-content hr {
   border: none;
-  border-top: 1px solid #334155;
+  border-top: 1px solid var(--hr);
   margin: 1.5rem 0;
 }
 
-/* Math — KaTeX targets these in Milestone 5 */
+/* Math — KaTeX */
 .preview-content .math-inline {
   font-size: 1em;
 }

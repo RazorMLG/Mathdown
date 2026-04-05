@@ -5,6 +5,14 @@ import Sidebar from "./Sidebar";
 import { useNotes } from "../hooks/useNotes";
 import { useDebounce } from "../hooks/useDebounce";
 
+type Theme = "light" | "dark";
+
+function getInitialTheme(): Theme {
+  return window.matchMedia("(prefers-color-scheme: dark)").matches
+    ? "dark"
+    : "light";
+}
+
 export default function App() {
   const {
     notes,
@@ -15,6 +23,8 @@ export default function App() {
     setActiveNote,
   } = useNotes();
 
+  const [theme, setTheme] = useState<Theme>(getInitialTheme);
+
   const [editorContent, setEditorContent] = useState<string>(
     activeNote?.content ?? "",
   );
@@ -24,8 +34,6 @@ export default function App() {
   // Sync editor when active note changes
   useEffect(() => {
     if (activeNote) {
-      // New empty note: carry over whatever is in the editor
-      // Existing note with content: show that note's content
       setEditorContent(activeNote.content || editorContentRef.current);
     } else {
       setEditorContent("");
@@ -41,8 +49,22 @@ export default function App() {
     }
   }, [debouncedContent]);
 
+  function toggleTheme() {
+    setTheme((t) => (t === "dark" ? "light" : "dark"));
+  }
+
   return (
-    <div className="flex h-screen w-screen bg-zinc-900 text-zinc-100 overflow-hidden">
+    <div
+      className={theme === "dark" ? "dark" : ""}
+      style={{
+        display: "flex",
+        height: "100vh",
+        width: "100vw",
+        background: "var(--bg)",
+        color: "var(--text)",
+        overflow: "hidden",
+      }}
+    >
       <Sidebar
         notes={notes}
         activeNoteId={activeNote?.id ?? null}
@@ -52,18 +74,92 @@ export default function App() {
       />
 
       {/* Editor panel */}
-      <div className="flex flex-col flex-1 border-r border-zinc-700 min-w-0">
-        <div className="px-4 py-2 text-xs font-semibold uppercase tracking-widest text-zinc-500 border-b border-zinc-700 bg-zinc-900">
-          Editor
-        </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          flex: 1,
+          borderRight: "1px solid var(--border)",
+          minWidth: 0,
+          position: "relative",
+        }}
+      >
+        <span
+          style={{
+            position: "absolute",
+            top: "10px",
+            right: "12px",
+            fontSize: "10px",
+            color: "var(--muted)",
+            letterSpacing: "0.05em",
+            userSelect: "none",
+            pointerEvents: "none",
+            zIndex: 1,
+          }}
+        >
+          editor
+        </span>
         <Editor content={editorContent} onChange={setEditorContent} />
       </div>
 
       {/* Preview panel */}
-      <div className="flex flex-col flex-1 min-w-0">
-        <div className="px-4 py-2 text-xs font-semibold uppercase tracking-widest text-zinc-500 border-b border-zinc-700 bg-zinc-900">
-          Preview
-        </div>
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          flex: 1,
+          minWidth: 0,
+          position: "relative",
+        }}
+      >
+        <span
+          style={{
+            position: "absolute",
+            top: "10px",
+            right: "44px",
+            fontSize: "10px",
+            color: "var(--muted)",
+            letterSpacing: "0.05em",
+            userSelect: "none",
+            pointerEvents: "none",
+            zIndex: 1,
+          }}
+        >
+          preview
+        </span>
+        {/* Theme toggle */}
+        <button
+          onClick={toggleTheme}
+          title={
+            theme === "dark" ? "Switch to light mode" : "Switch to dark mode"
+          }
+          style={{
+            position: "absolute",
+            top: "6px",
+            right: "10px",
+            zIndex: 2,
+            background: "transparent",
+            border: "none",
+            cursor: "pointer",
+            color: "var(--muted)",
+            padding: "4px",
+            borderRadius: "4px",
+            fontSize: "14px",
+            lineHeight: 1,
+          }}
+          onMouseEnter={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.background =
+              "var(--surface-2)";
+            (e.currentTarget as HTMLButtonElement).style.color = "var(--text)";
+          }}
+          onMouseLeave={(e) => {
+            (e.currentTarget as HTMLButtonElement).style.background =
+              "transparent";
+            (e.currentTarget as HTMLButtonElement).style.color = "var(--muted)";
+          }}
+        >
+          {theme === "dark" ? "☀" : "☾"}
+        </button>
         <Preview content={editorContent} />
       </div>
     </div>

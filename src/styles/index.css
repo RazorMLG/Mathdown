@@ -1,5 +1,55 @@
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap");
 @import "tailwindcss";
 
+/* ─── Light theme (default) ─────────────────────────────── */
+:root {
+  --bg: #ffffff;
+  --surface: #f7f7f5;
+  --surface-2: #efefed;
+  --border: #e9e9e7;
+  --text: #1a1a1a;
+  --muted: #9b9b9b;
+  --accent: #4f46e5;
+  --accent-bg: #eef2ff;
+  --danger: #dc2626;
+  --code-bg: #f1f5f9;
+  --code-text: #334155;
+  --link: #4f46e5;
+  --link-hover: #4338ca;
+  --pre-bg: #f8fafc;
+  --pre-border: #e2e8f0;
+  --quote-border: #cbd5e1;
+  --quote-text: #64748b;
+  --hr: #e9e9e7;
+  --heading: #111111;
+  --h1-border: #e9e9e7;
+}
+
+/* ─── Dark theme ─────────────────────────────────────────── */
+.dark {
+  --bg: #191919;
+  --surface: #252525;
+  --surface-2: #2f2f2f;
+  --border: #373737;
+  --text: #e8e8e8;
+  --muted: #787878;
+  --accent: #818cf8;
+  --accent-bg: #1e1b4b;
+  --danger: #ef4444;
+  --code-bg: #0f172a;
+  --code-text: #7dd3fc;
+  --link: #818cf8;
+  --link-hover: #a5b4fc;
+  --pre-bg: #0f172a;
+  --pre-border: #1e293b;
+  --quote-border: #475569;
+  --quote-text: #94a3b8;
+  --hr: #373737;
+  --heading: #f1f5f9;
+  --h1-border: #373737;
+}
+
+/* ─── Reset ──────────────────────────────────────────────── */
 * {
   box-sizing: border-box;
   margin: 0;
@@ -12,4 +62,5 @@ body,
   height: 100%;
   width: 100%;
   overflow: hidden;
+  font-family: "Inter", system-ui, sans-serif;
 }
