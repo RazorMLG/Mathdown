@@ -1,9 +1,11 @@
 import { useEffect, useRef, useState } from "react";
+// import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts"; // Uncomment after writing the hook
 import Editor from "./Editor";
 import Preview from "./Preview";
 import Sidebar from "./Sidebar";
 import { useNotes } from "../hooks/useNotes";
 import { useDebounce } from "../hooks/useDebounce";
+import { useKeyboardShortcuts } from "../hooks/useKeyboardShortcuts";
 
 type Theme = "light" | "dark";
 
@@ -31,10 +33,20 @@ export default function App() {
   const editorContentRef = useRef(editorContent);
   editorContentRef.current = editorContent;
 
+  const editorRef = useRef<HTMLTextAreaElement>(null);
+
+  // Wire up keyboard shortcuts — call useKeyboardShortcuts here once you've written the hook:
+  useKeyboardShortcuts({
+    editorRef,
+    onNewNote: createNote,
+    onSave: () => updateNote(activeNote!.id, editorContentRef.current),
+    onChange: setEditorContent,
+  });
+
   // Sync editor when active note changes
   useEffect(() => {
     if (activeNote) {
-      setEditorContent(activeNote.content || editorContentRef.current);
+      setEditorContent(activeNote.content);
     } else {
       setEditorContent("");
     }
@@ -99,7 +111,11 @@ export default function App() {
         >
           editor
         </span>
-        <Editor content={editorContent} onChange={setEditorContent} />
+        <Editor
+          ref={editorRef}
+          content={editorContent}
+          onChange={setEditorContent}
+        />
       </div>
 
       {/* Preview panel */}

@@ -26,6 +26,18 @@ function sortNotes(notes: Note[], field: SortField, dir: SortDir): Note[] {
   });
 }
 
+function filterNotes(notes: Note[], query: string): Note[] {
+  const lowercasedQuery = query.toLowerCase();
+
+  const filteredNotes: Note[] = notes.filter(
+    (note) =>
+      note.content.toLowerCase().includes(lowercasedQuery) ||
+      note.title.toLowerCase().includes(lowercasedQuery),
+  );
+
+  return filteredNotes;
+}
+
 export default function Sidebar({
   notes,
   activeNoteId,
@@ -35,8 +47,10 @@ export default function Sidebar({
 }: SidebarProps) {
   const [sortField, setSortField] = useState<SortField>("updatedAt");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
+  const [searchQuery, setSearchQuery] = useState<string>("");
 
-  const sorted = sortNotes(notes, sortField, sortDir);
+  const sorted = sortNotes(filterNotes(notes, searchQuery), sortField, sortDir);
+  const displayed = sorted;
 
   function toggleDir() {
     setSortDir((d) => (d === "asc" ? "desc" : "asc"));
@@ -81,6 +95,33 @@ export default function Sidebar({
             canDelete={activeNoteId !== null}
           />
         </div>
+      </div>
+
+      {/* Search input */}
+      <div
+        style={{
+          padding: "8px 12px",
+          borderBottom: "1px solid var(--border)",
+        }}
+      >
+        <input
+          type="text"
+          placeholder="Search notes..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          style={{
+            width: "100%",
+            boxSizing: "border-box",
+            fontSize: "12px",
+            padding: "5px 8px",
+            borderRadius: "5px",
+            border: "1px solid var(--border)",
+            background: "var(--surface-2)",
+            color: "var(--text)",
+            outline: "none",
+            fontFamily: "inherit",
+          }}
+        />
       </div>
 
       {/* Sort controls */}
@@ -138,7 +179,7 @@ export default function Sidebar({
 
       {/* Note list */}
       <div style={{ flex: 1, overflowY: "auto" }}>
-        {sorted.length === 0 ? (
+        {displayed.length === 0 ? (
           <div
             style={{
               padding: "2rem 1rem",
@@ -147,10 +188,10 @@ export default function Sidebar({
               fontSize: "13px",
             }}
           >
-            No notes yet
+            {searchQuery.trim() ? "No matching notes" : "No notes yet"}
           </div>
         ) : (
-          sorted.map((note) => (
+          displayed.map((note) => (
             <NoteItem
               key={note.id}
               note={note}

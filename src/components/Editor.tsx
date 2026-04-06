@@ -1,11 +1,17 @@
+import { forwardRef } from "react";
+
 interface EditorProps {
   content: string;
   onChange: (value: string) => void;
 }
 
-export default function Editor({ content, onChange }: EditorProps) {
+const Editor = forwardRef<HTMLTextAreaElement, EditorProps>(function Editor(
+  { content, onChange },
+  ref,
+) {
   return (
     <textarea
+      ref={ref}
       value={content}
       onChange={(e) => onChange(e.target.value)}
       placeholder="Start writing Markdown..."
@@ -27,4 +33,6 @@ export default function Editor({ content, onChange }: EditorProps) {
       }}
     />
   );
-}
+});
+
+export default Editor;
