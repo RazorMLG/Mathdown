@@ -1,4 +1,3 @@
-import { useEffect, useRef } from "react";
 import katex from "katex";
 import "katex/dist/katex.min.css";
 import "../styles/preview.css";
@@ -9,37 +8,34 @@ interface PreviewProps {
   content: string;
 }
 
-export default function Preview({ content }: PreviewProps) {
-  const html = content ? render(tokenize(content)) : "";
-  const containerRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!containerRef.current) return;
-
-    containerRef.current
-      .querySelectorAll<HTMLElement>(".math-inline")
-      .forEach((el) => {
-        katex.render(el.textContent ?? "", el, {
-          throwOnError: false,
-          displayMode: false,
-        });
-      });
-
-    containerRef.current
-      .querySelectorAll<HTMLElement>(".math-block")
-      .forEach((el) => {
-        katex.render(el.textContent ?? "", el, {
+function applyKatex(html: string): string {
+  return html
+    .replace(
+      /<div class="math-block">([\s\S]*?)<\/div>/g,
+      (_, tex) =>
+        `<div class="math-block">${katex.renderToString(tex.trim(), {
           throwOnError: false,
           displayMode: true,
-        });
-      });
-  }, [content]);
+        })}</div>`,
+    )
+    .replace(
+      /<span class="math-inline">([\s\S]*?)<\/span>/g,
+      (_, tex) =>
+        `<span class="math-inline">${katex.renderToString(tex.trim(), {
+          throwOnError: false,
+          displayMode: false,
+        })}</span>`,
+    );
+}
+
+export default function Preview({ content }: PreviewProps) {
+  const rawHtml = content ? render(tokenize(content)) : "";
+  const html = rawHtml ? applyKatex(rawHtml) : "";
 
   return (
     <div style={{ flex: 1, overflowY: "auto" }}>
       {html ? (
         <div
-          ref={containerRef}
           className="preview-content"
           dangerouslySetInnerHTML={{ __html: html }}
         />
