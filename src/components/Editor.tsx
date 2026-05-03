@@ -3,12 +3,31 @@ import { forwardRef } from "react";
 interface EditorProps {
   content: string;
   onChange: (value: string) => void;
+  disabled?: boolean;
 }
 
 const Editor = forwardRef<HTMLTextAreaElement, EditorProps>(function Editor(
-  { content, onChange },
+  { content, onChange, disabled = false },
   ref,
 ) {
+  if (disabled) {
+    return (
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          color: "var(--muted)",
+          fontSize: "13px",
+          fontFamily: '"JetBrains Mono", "Fira Code", monospace',
+        }}
+      >
+        Select or create a note to start writing
+      </div>
+    );
+  }
+
   return (
     <textarea
       ref={ref}

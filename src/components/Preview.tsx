@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from "react";
 import katex from "katex";
 import "katex/dist/katex.min.css";
 import "../styles/preview.css";
@@ -6,6 +7,7 @@ import { render } from "../parser/renderer";
 
 interface PreviewProps {
   content: string;
+  activeNoteId: string | null;
 }
 
 function applyKatex(html: string): string {
@@ -28,15 +30,31 @@ function applyKatex(html: string): string {
     );
 }
 
-export default function Preview({ content }: PreviewProps) {
+export default function Preview({ content, activeNoteId }: PreviewProps) {
   const rawHtml = content ? render(tokenize(content)) : "";
   const html = rawHtml ? applyKatex(rawHtml) : "";
+
+  const [fading, setFading] = useState(false);
+  const prevNoteId = useRef(activeNoteId);
+
+  useEffect(() => {
+    if (activeNoteId !== prevNoteId.current) {
+      prevNoteId.current = activeNoteId;
+      setFading(true);
+      const timer = setTimeout(() => setFading(false), 150);
+      return () => clearTimeout(timer);
+    }
+  }, [activeNoteId]);
 
   return (
     <div style={{ flex: 1, overflowY: "auto" }}>
       {html ? (
         <div
           className="preview-content"
+          style={{
+            opacity: fading ? 0 : 1,
+            transition: "opacity 150ms ease",
+          }}
           dangerouslySetInnerHTML={{ __html: html }}
         />
       ) : (

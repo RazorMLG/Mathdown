@@ -45,7 +45,7 @@ export default function Sidebar({
   onNewNote,
   onDeleteNote,
 }: SidebarProps) {
-  const [sortField, setSortField] = useState<SortField>("updatedAt");
+  const [sortField, setSortField] = useState<SortField>("title");
   const [sortDir, setSortDir] = useState<SortDir>("desc");
   const [searchQuery, setSearchQuery] = useState<string>("");
 
