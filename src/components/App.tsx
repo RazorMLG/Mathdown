@@ -31,6 +31,8 @@ export default function App() {
   const [isMobile, setIsMobile] = useState(() => window.innerWidth < 768);
   const [mobileView, setMobileView] = useState<MobileView>("editor");
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [editorWidth, setEditorWidth] = useState(50);
+  const [isResizing, setIsResizing] = useState(false);
 
   const [editorContent, setEditorContent] = useState<string>(
     activeNote?.content ?? "",
@@ -40,6 +42,7 @@ export default function App() {
 
   const editorRef = useRef<HTMLTextAreaElement>(null);
   const savedTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const splitPaneRef = useRef<HTMLDivElement>(null);
 
   useKeyboardShortcuts({
     editorRef,
@@ -58,6 +61,39 @@ export default function App() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  useEffect(() => {
+    if (!isResizing) {
+      return;
+    }
+
+    function handlePointerMove(event: MouseEvent) {
+      const pane = splitPaneRef.current;
+      if (!pane) {
+        return;
+      }
+
+      const bounds = pane.getBoundingClientRect();
+      const nextWidth = ((event.clientX - bounds.left) / bounds.width) * 100;
+      setEditorWidth(Math.min(75, Math.max(25, nextWidth)));
+    }
+
+    function stopResizing() {
+      setIsResizing(false);
+    }
+
+    document.body.style.cursor = "col-resize";
+    document.body.style.userSelect = "none";
+    window.addEventListener("mousemove", handlePointerMove);
+    window.addEventListener("mouseup", stopResizing);
+
+    return () => {
+      document.body.style.cursor = "";
+      document.body.style.userSelect = "";
+      window.removeEventListener("mousemove", handlePointerMove);
+      window.removeEventListener("mouseup", stopResizing);
+    };
+  }, [isResizing]);
 
   // Sync editor when active note changes
   useEffect(() => {
@@ -101,6 +137,10 @@ export default function App() {
   function handleMobileNoteSelect(id: string) {
     setActiveNote(id);
     setSidebarOpen(false);
+  }
+
+  function startResizing() {
+    setIsResizing(true);
   }
 
   const savedLabel =
@@ -180,194 +220,233 @@ export default function App() {
         </>
       )}
 
-      {/* Editor panel */}
       <div
+        ref={splitPaneRef}
         style={{
-          display: isMobile && mobileView !== "editor" ? "none" : "flex",
-          flexDirection: "column",
+          display: "flex",
           flex: 1,
-          borderRight: isMobile ? "none" : "1px solid var(--border)",
           minWidth: 0,
           position: "relative",
         }}
       >
-        {/* Mobile top bar */}
-        {isMobile && (
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              padding: "6px 10px",
-              borderBottom: "1px solid var(--border)",
-              background: "var(--surface)",
-              flexShrink: 0,
-            }}
-          >
-            <button
-              onClick={() => setSidebarOpen(true)}
-              title="Open notes"
+        {/* Editor panel */}
+        <div
+          style={{
+            display: isMobile && mobileView !== "editor" ? "none" : "flex",
+            flexDirection: "column",
+            flex: isMobile ? 1 : "0 0 auto",
+            width: isMobile ? "100%" : `${editorWidth}%`,
+            minWidth: 0,
+            position: "relative",
+          }}
+        >
+          {/* Mobile top bar */}
+          {isMobile && (
+            <div
               style={{
-                background: "transparent",
-                border: "none",
-                cursor: "pointer",
-                color: "var(--muted)",
-                fontSize: "18px",
-                lineHeight: 1,
-                padding: "4px 6px",
-                borderRadius: "4px",
+                display: "flex",
+                alignItems: "center",
+                padding: "6px 10px",
+                borderBottom: "1px solid var(--border)",
+                background: "var(--surface)",
+                flexShrink: 0,
               }}
             >
-              ☰
-            </button>
-            <span
-              style={{
-                flex: 1,
-                textAlign: "center",
-                fontSize: "12px",
-                color: "var(--muted)",
-                letterSpacing: "0.05em",
-              }}
-            >
-              {activeNote?.title ?? "No note selected"}
-            </span>
-            <button
-              onClick={toggleTheme}
-              title={theme === "dark" ? "Light mode" : "Dark mode"}
-              style={{
-                background: "transparent",
-                border: "none",
-                cursor: "pointer",
-                color: "var(--muted)",
-                fontSize: "14px",
-                lineHeight: 1,
-                padding: "4px 6px",
-                borderRadius: "4px",
-              }}
-            >
-              {theme === "dark" ? "☀" : "☾"}
-            </button>
-          </div>
-        )}
+              <button
+                onClick={() => setSidebarOpen(true)}
+                title="Open notes"
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "var(--muted)",
+                  fontSize: "18px",
+                  lineHeight: 1,
+                  padding: "4px 6px",
+                  borderRadius: "4px",
+                }}
+              >
+                ☰
+              </button>
+              <span
+                style={{
+                  flex: 1,
+                  textAlign: "center",
+                  fontSize: "12px",
+                  color: "var(--muted)",
+                  letterSpacing: "0.05em",
+                }}
+              >
+                {activeNote?.title ?? "No note selected"}
+              </span>
+              <button
+                onClick={toggleTheme}
+                title={theme === "dark" ? "Light mode" : "Dark mode"}
+                style={{
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "var(--muted)",
+                  fontSize: "14px",
+                  lineHeight: 1,
+                  padding: "4px 6px",
+                  borderRadius: "4px",
+                }}
+              >
+                {theme === "dark" ? "☀" : "☾"}
+              </button>
+            </div>
+          )}
 
-        {/* Desktop: floating labels */}
-        {!isMobile && (
-          <>
-            <span
-              style={{
-                position: "absolute",
-                top: "10px",
-                right: "12px",
-                fontSize: "10px",
-                color: "var(--muted)",
-                letterSpacing: "0.05em",
-                userSelect: "none",
-                pointerEvents: "none",
-                zIndex: 1,
-              }}
-            >
-              editor
-            </span>
-            {savedLabel && (
+          {/* Desktop: floating labels */}
+          {!isMobile && (
+            <>
               <span
                 style={{
                   position: "absolute",
                   top: "10px",
-                  right: "52px",
+                  right: "12px",
                   fontSize: "10px",
-                  color:
-                    saveState === "saved" ? "var(--accent)" : "var(--muted)",
+                  color: "var(--muted)",
                   letterSpacing: "0.05em",
                   userSelect: "none",
                   pointerEvents: "none",
                   zIndex: 1,
-                  transition: "opacity 400ms ease",
-                  opacity: saveState === "saved" ? 0.85 : 0.6,
                 }}
               >
-                {savedLabel}
+                editor
               </span>
-            )}
-          </>
-        )}
+              {savedLabel && (
+                <span
+                  style={{
+                    position: "absolute",
+                    top: "10px",
+                    right: "52px",
+                    fontSize: "10px",
+                    color:
+                      saveState === "saved" ? "var(--accent)" : "var(--muted)",
+                    letterSpacing: "0.05em",
+                    userSelect: "none",
+                    pointerEvents: "none",
+                    zIndex: 1,
+                    transition: "opacity 400ms ease",
+                    opacity: saveState === "saved" ? 0.85 : 0.6,
+                  }}
+                >
+                  {savedLabel}
+                </span>
+              )}
+            </>
+          )}
 
-        <Editor
-          ref={editorRef}
-          content={editorContent}
-          onChange={setEditorContent}
-          disabled={!activeNote}
-        />
-      </div>
+          <Editor
+            ref={editorRef}
+            content={editorContent}
+            onChange={setEditorContent}
+            disabled={!activeNote}
+          />
+        </div>
 
-      {/* Preview panel */}
-      <div
-        style={{
-          display: isMobile && mobileView !== "preview" ? "none" : "flex",
-          flexDirection: "column",
-          flex: 1,
-          minWidth: 0,
-          position: "relative",
-        }}
-      >
         {!isMobile && (
-          <>
-            <span
+          <div
+            onMouseDown={startResizing}
+            role="separator"
+            aria-label="Resize editor and preview panels"
+            aria-orientation="vertical"
+            style={{
+              width: "12px",
+              cursor: "col-resize",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              background: isResizing ? "var(--surface)" : "transparent",
+              transition: "background 120ms ease",
+              flexShrink: 0,
+            }}
+          >
+            <div
               style={{
-                position: "absolute",
-                top: "10px",
-                right: "44px",
-                fontSize: "10px",
-                color: "var(--muted)",
-                letterSpacing: "0.05em",
-                userSelect: "none",
-                pointerEvents: "none",
-                zIndex: 1,
+                width: "2px",
+                height: "48px",
+                borderRadius: "999px",
+                background: isResizing ? "var(--accent)" : "var(--border)",
+                transition: "background 120ms ease",
               }}
-            >
-              preview
-            </span>
-            {/* Theme toggle — desktop only */}
-            <button
-              onClick={toggleTheme}
-              title={
-                theme === "dark"
-                  ? "Switch to light mode"
-                  : "Switch to dark mode"
-              }
-              style={{
-                position: "absolute",
-                top: "6px",
-                right: "10px",
-                zIndex: 2,
-                background: "transparent",
-                border: "none",
-                cursor: "pointer",
-                color: "var(--muted)",
-                padding: "4px",
-                borderRadius: "4px",
-                fontSize: "14px",
-                lineHeight: 1,
-              }}
-              onMouseEnter={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.background =
-                  "var(--surface-2)";
-                (e.currentTarget as HTMLButtonElement).style.color =
-                  "var(--text)";
-              }}
-              onMouseLeave={(e) => {
-                (e.currentTarget as HTMLButtonElement).style.background =
-                  "transparent";
-                (e.currentTarget as HTMLButtonElement).style.color =
-                  "var(--muted)";
-              }}
-            >
-              {theme === "dark" ? "☀" : "☾"}
-            </button>
-          </>
+            />
+          </div>
         )}
-        <Preview
-          content={editorContent}
-          activeNoteId={activeNote?.id ?? null}
-        />
+
+        {/* Preview panel */}
+        <div
+          style={{
+            display: isMobile && mobileView !== "preview" ? "none" : "flex",
+            flexDirection: "column",
+            flex: 1,
+            minWidth: 0,
+            position: "relative",
+          }}
+        >
+          {!isMobile && (
+            <>
+              <span
+                style={{
+                  position: "absolute",
+                  top: "10px",
+                  right: "44px",
+                  fontSize: "10px",
+                  color: "var(--muted)",
+                  letterSpacing: "0.05em",
+                  userSelect: "none",
+                  pointerEvents: "none",
+                  zIndex: 1,
+                }}
+              >
+                preview
+              </span>
+              {/* Theme toggle — desktop only */}
+              <button
+                onClick={toggleTheme}
+                title={
+                  theme === "dark"
+                    ? "Switch to light mode"
+                    : "Switch to dark mode"
+                }
+                style={{
+                  position: "absolute",
+                  top: "6px",
+                  right: "10px",
+                  zIndex: 2,
+                  background: "transparent",
+                  border: "none",
+                  cursor: "pointer",
+                  color: "var(--muted)",
+                  padding: "4px",
+                  borderRadius: "4px",
+                  fontSize: "14px",
+                  lineHeight: 1,
+                }}
+                onMouseEnter={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.background =
+                    "var(--surface-2)";
+                  (e.currentTarget as HTMLButtonElement).style.color =
+                    "var(--text)";
+                }}
+                onMouseLeave={(e) => {
+                  (e.currentTarget as HTMLButtonElement).style.background =
+                    "transparent";
+                  (e.currentTarget as HTMLButtonElement).style.color =
+                    "var(--muted)";
+                }}
+              >
+                {theme === "dark" ? "☀" : "☾"}
+              </button>
+            </>
+          )}
+          <Preview
+            content={editorContent}
+            activeNoteId={activeNote?.id ?? null}
+          />
+        </div>
       </div>
 
       {/* Mobile bottom tab bar */}
